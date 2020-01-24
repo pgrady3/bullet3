@@ -1426,6 +1426,15 @@ const SharedMemoryStatus* PhysicsClientSharedMemory::processServerStatus()
 				}
 				break;
 			}
+			case CMD_SOFTBODY_DATA_FAILED: // Patrick Grady --------------------
+			{
+				b3Warning("getSoftBodyData failed");
+				break;
+			}
+			case CMD_SOFTBODY_DATA_COMPLETED:
+			{
+				break;
+			} // End PG ------------------------------------------------------
 			case CMD_LOAD_SOFT_BODY_FAILED:
 			{
                             B3_PROFILE("CMD_LOAD_SOFT_BODY_FAILED");

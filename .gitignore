@@ -4,6 +4,7 @@
 /build_cmake/
 
 *.pyc
+*.so
 
 # Python
 __pycache__/

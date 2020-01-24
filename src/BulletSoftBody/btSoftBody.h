@@ -331,6 +331,7 @@ public:
         btMultiBodyJacobianData jacobianData_t2;
         btVector3 t1;
         btVector3 t2;
+        btVector3 m_impulse; // Patrick Grady
 	};
     
     class DeformableRigidContact

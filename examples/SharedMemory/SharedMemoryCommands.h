@@ -3,6 +3,10 @@
 
 //this is a very experimental draft of commands. We will iterate on this API (commands, arguments etc)
 
+// Patrick Grady ---------
+#include "BulletSoftBody/btSoftBody.h"
+// End PG
+
 #include "SharedMemoryPublic.h"
 
 #ifdef __GNUC__
@@ -544,6 +548,33 @@ struct b3LoadSoftBodyResultArgs
 {
 	int m_objectUniqueId;
 };
+
+// Begin Patrick Grady -----------------------------
+
+struct SoftBodyDataArgs
+{
+    int m_bodyId;
+};
+
+struct SendSoftBodyData
+{
+	int m_numNodes;
+    // btAlignedObjectArray<Node> m_nodes;
+    // btSoftBody::tNodeArray m_nodes;
+    float m_x[10000];
+    float m_y[10000];
+    float m_z[10000];
+	int m_numContacts;
+    float m_contact_pos_x[10000];
+    float m_contact_pos_y[10000];
+    float m_contact_pos_z[10000];
+    float m_contact_force_x[10000];
+    float m_contact_force_y[10000];
+    float m_contact_force_z[10000];
+};
+
+// End PG
+
 
 struct RequestActualStateArgs
 {
@@ -1104,6 +1135,8 @@ struct SharedMemoryCommand
 	int m_updateFlags;
 
 	union {
+		struct SoftBodyDataArgs m_softBodyDataArguments; // Patrick Grady
+		
 		struct UrdfArgs m_urdfArguments;
 		struct SdfArgs m_sdfArguments;
 		struct MjcfArgs m_mjcfArguments;
@@ -1191,6 +1224,8 @@ struct SharedMemoryStatus
 	int m_updateFlags;
 
 	union {
+		struct SendSoftBodyData m_sendSoftBodyData; // Patrick Grady
+
 		struct BulletDataStreamArgs m_dataStreamArguments;
 		struct SdfLoadedArgs m_sdfLoadedArgs;
 		struct SendActualStateArgs m_sendActualStateArgs;

@@ -3444,7 +3444,7 @@ void btSoftBody::PSolve_RContacts(btSoftBody* psb, btScalar kst, btScalar ti)
 	btMultiBodyJacobianData jacobianData;
 	for (int i = 0, ni = psb->m_rcontacts.size(); i < ni; ++i)
 	{
-		const RContact& c = psb->m_rcontacts[i];
+		RContact& c = psb->m_rcontacts[i]; // Patrick Grady
 		const sCti& cti = c.m_cti;
 		if (cti.m_colObj->hasContactResponse())
 		{
@@ -3491,6 +3491,7 @@ void btSoftBody::PSolve_RContacts(btSoftBody* psb, btScalar kst, btScalar ti)
 				// c0 is the impulse matrix, c3 is 1 - the friction coefficient or 0, c4 is the contact hardness coefficient
 				const btVector3 impulse = c.m_c0 * ((vr - (fv * c.m_c3) + (cti.m_normal * (dp * c.m_c4))) * kst);
 				c.m_node->m_x -= impulse * c.m_c2;
+				c.m_impulse.setValue(impulse.x(), impulse.y(), impulse.z()); //Patrick Grady
 
 				if (cti.m_colObj->getInternalType() == btCollisionObject::CO_RIGID_BODY)
 				{

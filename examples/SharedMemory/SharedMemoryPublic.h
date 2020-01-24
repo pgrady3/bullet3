@@ -42,6 +42,7 @@ enum EnumSharedMemoryClientCommand
 	CMD_SAVE_BULLET,
 	CMD_LOAD_MJCF,
 	CMD_LOAD_SOFT_BODY,
+	CMD_GET_SOFTBODY_DATA, // Patrick Grady
 	CMD_SEND_BULLET_DATA_STREAM,
 	CMD_CREATE_BOX_COLLISION_SHAPE,
 	CMD_CREATE_RIGID_BODY,
@@ -217,6 +218,9 @@ enum EnumSharedMemoryServerStatus
 	CMD_COLLISION_SHAPE_INFO_FAILED,
 	CMD_LOAD_SOFT_BODY_FAILED,
 	CMD_LOAD_SOFT_BODY_COMPLETED,
+
+	CMD_SOFTBODY_DATA_FAILED, // Patrick Grady
+	CMD_SOFTBODY_DATA_COMPLETED, // Patrick Grady
 
 	CMD_SYNC_USER_DATA_COMPLETED,
 	CMD_SYNC_USER_DATA_FAILED,
@@ -451,6 +455,23 @@ struct b3MeshData
 	int m_numVertices;
 	struct b3MeshVertex* m_vertices;
 };
+ // Patrick Grady
+struct b3SoftBodyData
+{
+	int m_numNodes;
+	const float* m_x; // m_numNodes floats
+	const float* m_y; // m_numNodes floats
+	const float* m_z; // m_numNodes floats
+	int m_numContacts;
+    const float* m_contact_pos_x;
+    const float* m_contact_pos_y;
+    const float* m_contact_pos_z;
+    const float* m_contact_force_x;
+    const float* m_contact_force_y;
+    const float* m_contact_force_z;
+};
+// End PG
+
 
 struct b3OpenGLVisualizerCameraInfo
 {

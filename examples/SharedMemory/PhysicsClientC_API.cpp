@@ -260,6 +260,53 @@ B3_SHARED_API void b3LoadMJCFCommandSetFlags(b3SharedMemoryCommandHandle command
 	}
 }
 
+
+// Patrick Grady - Jan 2019 - Adding soft body contact force to pybullet
+
+B3_SHARED_API b3SharedMemoryCommandHandle b3GetSoftBodyDataCommand(b3PhysicsClientHandle physClient, int bodyId)
+{
+	PhysicsClient* cl = (PhysicsClient*)physClient;
+	b3Assert(cl);
+	b3Assert(cl->canSubmitCommand());
+
+	if (cl->canSubmitCommand())
+	{
+		struct SharedMemoryCommand* command = cl->getAvailableSharedMemoryCommand();
+		b3Assert(command);
+		command->m_type = CMD_GET_SOFTBODY_DATA;
+
+        command->m_softBodyDataArguments.m_bodyId = bodyId;
+
+		return (b3SharedMemoryCommandHandle)command;
+    }
+	return 0;
+}
+
+B3_SHARED_API int b3GetSoftBodyData(b3SharedMemoryStatusHandle statusHandle, struct b3SoftBodyData* data)
+{
+	const SharedMemoryStatus* status = (const SharedMemoryStatus*)statusHandle;
+	b3Assert(status);
+	b3Assert(status->m_type == CMD_SOFTBODY_DATA_COMPLETED);
+	if (status && status->m_type == CMD_SOFTBODY_DATA_COMPLETED)
+	{
+        data->m_numNodes = status->m_sendSoftBodyData.m_numNodes;
+        data->m_x = status->m_sendSoftBodyData.m_x;
+        data->m_y = status->m_sendSoftBodyData.m_y;
+        data->m_z = status->m_sendSoftBodyData.m_z;
+        data->m_numContacts = status->m_sendSoftBodyData.m_numContacts;
+        data->m_contact_pos_x = status->m_sendSoftBodyData.m_contact_pos_x;
+        data->m_contact_pos_y = status->m_sendSoftBodyData.m_contact_pos_y;
+        data->m_contact_pos_z = status->m_sendSoftBodyData.m_contact_pos_z;
+        data->m_contact_force_x = status->m_sendSoftBodyData.m_contact_force_x;
+        data->m_contact_force_y = status->m_sendSoftBodyData.m_contact_force_y;
+        data->m_contact_force_z = status->m_sendSoftBodyData.m_contact_force_z;
+		return 1;
+	}
+	return 0;
+}
+
+// End Patrick Grady -----------------------------------------------
+
 B3_SHARED_API b3SharedMemoryCommandHandle b3LoadSoftBodyCommandInit(b3PhysicsClientHandle physClient, const char* fileName)
 {
 	PhysicsClient* cl = (PhysicsClient*)physClient;

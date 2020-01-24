@@ -7831,6 +7831,53 @@ bool PhysicsServerCommandProcessor::processRequestContactpointInformationCommand
 	return hasStatus;
 }
 
+// Patrick Grady -------------------------------------
+bool PhysicsServerCommandProcessor::processRequestSoftBodyDataCommand(const struct SharedMemoryCommand& clientCmd, struct SharedMemoryStatus& serverStatusOut, char* bufferServerToClient, int bufferSizeInBytes)
+{
+	serverStatusOut.m_type = CMD_SOFTBODY_DATA_FAILED;
+	const SoftBodyDataArgs& softBodyDataArgs = clientCmd.m_softBodyDataArguments;
+
+    InternalBodyHandle* bodyHandle = m_data->m_bodyHandles.getHandle(softBodyDataArgs.m_bodyId);
+    btSoftBody* psb = bodyHandle->m_softBody;
+    serverStatusOut.m_sendSoftBodyData.m_numNodes = psb->m_nodes.size();
+    // printf("cloth node 0 pos: (%f, %f, %f)\n", psb->m_nodes[0].m_x.x(), psb->m_nodes[0].m_x.y(), psb->m_nodes[0].m_x.z());
+    for (int i = 0; i < psb->m_nodes.size() && i < 10000; i++)
+    {
+        serverStatusOut.m_sendSoftBodyData.m_x[i] = psb->m_nodes[i].m_x.x();
+        serverStatusOut.m_sendSoftBodyData.m_y[i] = psb->m_nodes[i].m_x.y();
+        serverStatusOut.m_sendSoftBodyData.m_z[i] = psb->m_nodes[i].m_x.z();
+    }
+
+    // TODO: Need to record and access impulse computed from each node
+    // https://github.com/bulletphysics/bullet3/blob/cdd56e46411527772711da5357c856a90ad9ea67/src/BulletSoftBody/btSoftBody.cpp#L3090
+    // if (psb->m_rcontacts.size() > 0)
+    //     printf("%d cloth contacts: force: %f, pos: (%f, %f, %f)\n", psb->m_rcontacts.size(), psb->m_rcontacts[0].m_c2, psb->m_rcontacts[0].m_node->m_x.x(), psb->m_rcontacts[0].m_node->m_x.y(), psb->m_rcontacts[0].m_node->m_x.z());
+    serverStatusOut.m_sendSoftBodyData.m_numContacts = psb->m_rcontacts.size();
+    for (int i = 0; i < psb->m_rcontacts.size() && i < 10000; i++)
+    {
+        serverStatusOut.m_sendSoftBodyData.m_contact_pos_x[i] = psb->m_rcontacts[i].m_node->m_x.x();
+        serverStatusOut.m_sendSoftBodyData.m_contact_pos_y[i] = psb->m_rcontacts[i].m_node->m_x.y();
+        serverStatusOut.m_sendSoftBodyData.m_contact_pos_z[i] = psb->m_rcontacts[i].m_node->m_x.z();
+        // serverStatusOut.m_sendSoftBodyData.m_contact_force_x[i] = psb->m_rcontacts[i].m_impulse.x() / m_data->m_physicsDeltaTime;
+        // serverStatusOut.m_sendSoftBodyData.m_contact_force_y[i] = psb->m_rcontacts[i].m_impulse.y() / m_data->m_physicsDeltaTime;
+        // serverStatusOut.m_sendSoftBodyData.m_contact_force_z[i] = psb->m_rcontacts[i].m_impulse.z() / m_data->m_physicsDeltaTime;
+        serverStatusOut.m_sendSoftBodyData.m_contact_force_x[i] = psb->m_rcontacts[i].m_impulse.x() * psb->m_rcontacts[i].m_c2;
+        serverStatusOut.m_sendSoftBodyData.m_contact_force_y[i] = psb->m_rcontacts[i].m_impulse.y() * psb->m_rcontacts[i].m_c2;
+        serverStatusOut.m_sendSoftBodyData.m_contact_force_z[i] = psb->m_rcontacts[i].m_impulse.z() * psb->m_rcontacts[i].m_c2;
+        // serverStatusOut.m_sendSoftBodyData.m_contact_force_x[i] = (1.0 / psb->m_rcontacts[i].m_node->m_im) * psb->m_rcontacts[i].m_impulse.x() * psb->m_rcontacts[i].m_c2 / m_data->m_physicsDeltaTime;
+        // serverStatusOut.m_sendSoftBodyData.m_contact_force_y[i] = (1.0 / psb->m_rcontacts[i].m_node->m_im) * psb->m_rcontacts[i].m_impulse.y() * psb->m_rcontacts[i].m_c2 / m_data->m_physicsDeltaTime;
+        // serverStatusOut.m_sendSoftBodyData.m_contact_force_z[i] = (1.0 / psb->m_rcontacts[i].m_node->m_im) * psb->m_rcontacts[i].m_impulse.z() * psb->m_rcontacts[i].m_c2 / m_data->m_physicsDeltaTime;
+        // serverStatusOut.m_sendSoftBodyData.m_contact_force_x[i] = (1.0 / psb->m_rcontacts[i].m_node->m_im) * psb->m_rcontacts[i].m_impulse.x() / m_data->m_physicsDeltaTime;
+        // serverStatusOut.m_sendSoftBodyData.m_contact_force_y[i] = (1.0 / psb->m_rcontacts[i].m_node->m_im) * psb->m_rcontacts[i].m_impulse.y() / m_data->m_physicsDeltaTime;
+        // serverStatusOut.m_sendSoftBodyData.m_contact_force_z[i] = (1.0 / psb->m_rcontacts[i].m_node->m_im) * psb->m_rcontacts[i].m_impulse.z() / m_data->m_physicsDeltaTime;
+    }
+
+	bool hasStatus = true;
+	serverStatusOut.m_type = CMD_SOFTBODY_DATA_COMPLETED;
+	return hasStatus;
+}
+// End Patrick Grady ------------------------------------------------
+
 bool PhysicsServerCommandProcessor::processRequestBodyInfoCommand(const struct SharedMemoryCommand& clientCmd, struct SharedMemoryStatus& serverStatusOut, char* bufferServerToClient, int bufferSizeInBytes)
 {
 	bool hasStatus = true;
@@ -12878,6 +12925,11 @@ bool PhysicsServerCommandProcessor::processCommand(const struct SharedMemoryComm
 			hasStatus = processLoadSoftBodyCommand(clientCmd, serverStatusOut, bufferServerToClient, bufferSizeInBytes);
 			break;
 		}
+		case CMD_GET_SOFTBODY_DATA: // Patrick Grady -----------------------
+		{
+			hasStatus = processRequestSoftBodyDataCommand(clientCmd, serverStatusOut, bufferServerToClient, bufferSizeInBytes);
+			break;
+		} // End PG ---------------------------
 		case CMD_CREATE_SENSOR:
 		{
 			hasStatus = processCreateSensorCommand(clientCmd, serverStatusOut, bufferServerToClient, bufferSizeInBytes);
