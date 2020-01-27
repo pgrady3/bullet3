@@ -331,7 +331,6 @@ public:
         btMultiBodyJacobianData jacobianData_t2;
         btVector3 t1;
         btVector3 t2;
-        btVector3 m_impulse; // Patrick Grady
 	};
     
     class DeformableRigidContact
@@ -343,6 +342,8 @@ public:
         btScalar m_c2;     // inverse mass of node/face
         btScalar m_c3;     // Friction
         btScalar m_c4;     // Hardness
+
+        btVector3 m_impulse; // Patrick Grady
         
         // jacobians and unit impulse responses for multibody
         btMultiBodyJacobianData jacobianData_normal;
