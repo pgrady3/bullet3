@@ -2202,6 +2202,8 @@ static PyObject* pybullet_getSoftBodyData(PyObject* self, PyObject* args, PyObje
             memcpy(PyArray_DATA(pyContactForceX), data.m_contact_force_x, data.m_numContacts * sizeof(float));
             memcpy(PyArray_DATA(pyContactForceY), data.m_contact_force_y, data.m_numContacts * sizeof(float));
             memcpy(PyArray_DATA(pyContactForceZ), data.m_contact_force_z, data.m_numContacts * sizeof(float));
+
+            printf("getSoftBodyData: dimsContact = %d, NUMPY \n\n", data.m_numContacts);
 #else   //PYBULLET_USE_NUMPY
             pyX = PyTuple_New(data.m_numNodes);
             pyY = PyTuple_New(data.m_numNodes);
@@ -2227,7 +2229,11 @@ static PyObject* pybullet_getSoftBodyData(PyObject* self, PyObject* args, PyObje
                 PyTuple_SetItem(pyContactForceY, i, PyFloat_FromDouble(data.m_contact_force_y[i]));
                 PyTuple_SetItem(pyContactForceZ, i, PyFloat_FromDouble(data.m_contact_force_z[i]));
             }
+
+
+			printf("getSoftBodyData: dimsContact = %d, NO NUMPY \n\n", data.m_numContacts);
 #endif  //PYBULLET_USE_NUMPY
+
 
 			PyTuple_SetItem(pyResultList, 0, pyX);
 			PyTuple_SetItem(pyResultList, 1, pyY);
