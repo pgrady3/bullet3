@@ -147,7 +147,7 @@ void btDeformableContactProjection::setConstraints(const btContactSolverInfo& in
 		for (int j = 0; j < psb->m_nodeRigidContacts.size(); ++j)
 		{
 			btSoftBody::DeformableNodeRigidContact& contact = psb->m_nodeRigidContacts[j];
-			// skip fixed points
+			// skip fixed points			
 			if (contact.m_node->m_im == 0)
 			{
 				continue;
@@ -162,6 +162,8 @@ void btDeformableContactProjection::setConstraints(const btContactSolverInfo& in
 			{
 				m_nodeRigidConstraints[i].push_back(constraint);
 			}
+
+			contact.m_impulse = contact.m_c0 * vr; // Patrick Grady
 		}
 		
 		// set Deformable Face vs. Rigid constraint

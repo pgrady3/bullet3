@@ -1,6 +1,7 @@
 import pybullet as p
 from time import sleep
 import pybullet_data
+import numpy as np
 
 physicsClient = p.connect(p.GUI)
 p.setAdditionalSearchPath(pybullet_data.getDataPath())
@@ -39,6 +40,7 @@ softId = p.loadSoftBody("tube.vtk", [0, 0, 0], mass=10, useNeoHookean = 0, NeoHo
 
 #p.setPhysicsEngineParameter(sparseSdfVoxelSize=0.25)
 p.setRealTimeSimulation(0)
+np.set_printoptions(precision=4, suppress=True)
 
 while p.isConnected():
   p.setGravity(0,0,-10)
@@ -54,11 +56,11 @@ while p.isConnected():
   # print('contForceY', len(contForceY))
   # print('contForceZ', len(contForceZ))
   #print(contX)
-  print(contForceX)
+  print('fx', contForceX)
   #print(contY)
-  print(contForceY)
+  print('fy', contForceY)
   #print(contZ)
-  print(contForceZ)
+  print('fz', contForceZ)
 
   #for i in range(len(contForceX)):
   #  p.addUserDebugLine([contX[i], contY[i], contZ[i]], [contX[i], contY[i], contZ[i] + 3])
