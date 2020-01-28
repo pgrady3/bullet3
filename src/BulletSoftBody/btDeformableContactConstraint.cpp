@@ -134,7 +134,7 @@ void btDeformableNodeAnchorConstraint::applyImpulse(const btVector3& impulse)
 }
 
 /* ================   Deformable vs. Rigid   =================== */
-btDeformableRigidContactConstraint::btDeformableRigidContactConstraint(const btSoftBody::DeformableRigidContact& c, const btContactSolverInfo& infoGlobal)
+btDeformableRigidContactConstraint::btDeformableRigidContactConstraint(btSoftBody::DeformableRigidContact& c, const btContactSolverInfo& infoGlobal)
 : m_contact(&c)
 , btDeformableContactConstraint(c.m_cti.m_normal, infoGlobal)
 {
@@ -224,12 +224,10 @@ btScalar btDeformableRigidContactConstraint::solveConstraint(const btContactSolv
     m_total_tangent_dv -= impulse_tangent * m_contact->m_c2;
 
     //Patrick Grady, save impulse
-    //btVector3 m_impulse_test;
+    btVector3 m_impulse_test;
     m_contact->m_impulse.setValue(impulse.x(), impulse.y(), impulse.z());
-    printf("btDeformableRigidContactConstraint::solveConstraint %f %f %f\n", impulse[0], impulse[1], impulse[2]);
-
-
-    //m_contact->m_impulse.setValue(impulse.x(), impulse.y(), impulse.z());
+    if (btDot(m_impulse_test, m_impulse_test) > 0.00001)
+        printf("btDeformableRigidContactConstraint::solveConstraint %f %f %f\n", impulse[0], impulse[1], impulse[2]);
 
     if (m_total_normal_dv.dot(cti.m_normal) < 0)
     {
@@ -329,7 +327,7 @@ btScalar btDeformableRigidContactConstraint::solveSplitImpulse(const btContactSo
 }
 
 /* ================   Node vs. Rigid   =================== */
-btDeformableNodeRigidContactConstraint::btDeformableNodeRigidContactConstraint(const btSoftBody::DeformableNodeRigidContact& contact, const btContactSolverInfo& infoGlobal)
+btDeformableNodeRigidContactConstraint::btDeformableNodeRigidContactConstraint(btSoftBody::DeformableNodeRigidContact& contact, const btContactSolverInfo& infoGlobal)
     : m_node(contact.m_node)
     , btDeformableRigidContactConstraint(contact, infoGlobal)
     {
@@ -367,7 +365,7 @@ void btDeformableNodeRigidContactConstraint::applySplitImpulse(const btVector3& 
 };
 
 /* ================   Face vs. Rigid   =================== */
-btDeformableFaceRigidContactConstraint::btDeformableFaceRigidContactConstraint(const btSoftBody::DeformableFaceRigidContact& contact, const btContactSolverInfo& infoGlobal)
+btDeformableFaceRigidContactConstraint::btDeformableFaceRigidContactConstraint(btSoftBody::DeformableFaceRigidContact& contact, const btContactSolverInfo& infoGlobal)
 : m_face(contact.m_face)
 , btDeformableRigidContactConstraint(contact, infoGlobal)
 {

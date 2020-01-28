@@ -167,9 +167,9 @@ public:
     btVector3 m_total_normal_dv;
     btVector3 m_total_tangent_dv;
     btScalar m_penetration;
-    const btSoftBody::DeformableRigidContact* m_contact;
+    btSoftBody::DeformableRigidContact* m_contact;
 	
-    btDeformableRigidContactConstraint(const btSoftBody::DeformableRigidContact& c, const btContactSolverInfo& infoGlobal);
+    btDeformableRigidContactConstraint(btSoftBody::DeformableRigidContact& c, const btContactSolverInfo& infoGlobal);
     btDeformableRigidContactConstraint(const btDeformableRigidContactConstraint& other);
 	btDeformableRigidContactConstraint(){}
     virtual ~btDeformableRigidContactConstraint()
@@ -195,9 +195,9 @@ class btDeformableNodeRigidContactConstraint : public btDeformableRigidContactCo
 {
 public:
     // the deformable node in contact
-    const btSoftBody::Node* m_node;
+    btSoftBody::Node* m_node;
 	
-    btDeformableNodeRigidContactConstraint(const btSoftBody::DeformableNodeRigidContact& contact, const btContactSolverInfo& infoGlobal);
+    btDeformableNodeRigidContactConstraint(btSoftBody::DeformableNodeRigidContact& contact, const btContactSolverInfo& infoGlobal);
     btDeformableNodeRigidContactConstraint(const btDeformableNodeRigidContactConstraint& other);
 	btDeformableNodeRigidContactConstraint(){}
     virtual ~btDeformableNodeRigidContactConstraint()
@@ -225,8 +225,8 @@ public:
 class btDeformableFaceRigidContactConstraint : public btDeformableRigidContactConstraint
 {
 public:
-    const btSoftBody::Face* m_face;
-    btDeformableFaceRigidContactConstraint(const btSoftBody::DeformableFaceRigidContact& contact, const btContactSolverInfo& infoGlobal);
+    btSoftBody::Face* m_face;
+    btDeformableFaceRigidContactConstraint(btSoftBody::DeformableFaceRigidContact& contact, const btContactSolverInfo& infoGlobal);
     btDeformableFaceRigidContactConstraint(const btDeformableFaceRigidContactConstraint& other);
 	btDeformableFaceRigidContactConstraint(){}
     virtual ~btDeformableFaceRigidContactConstraint()

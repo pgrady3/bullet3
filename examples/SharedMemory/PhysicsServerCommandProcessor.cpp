@@ -7868,9 +7868,9 @@ bool PhysicsServerCommandProcessor::processRequestSoftBodyDataCommand(const stru
         // serverStatusOut.m_sendSoftBodyData.m_contact_force_x[i] = psb->m_rcontacts[i].m_impulse.x() / m_data->m_physicsDeltaTime;
         // serverStatusOut.m_sendSoftBodyData.m_contact_force_y[i] = psb->m_rcontacts[i].m_impulse.y() / m_data->m_physicsDeltaTime;
         // serverStatusOut.m_sendSoftBodyData.m_contact_force_z[i] = psb->m_rcontacts[i].m_impulse.z() / m_data->m_physicsDeltaTime;
-        serverStatusOut.m_sendSoftBodyData.m_contact_force_x[i] = /*psb->m_rcontacts[i].m_impulse.x() * */psb->m_nodeRigidContacts[i].m_c0[0][0];
-        serverStatusOut.m_sendSoftBodyData.m_contact_force_y[i] = /*psb->m_rcontacts[i].m_impulse.y() * */psb->m_nodeRigidContacts[i].m_c0[1][0];
-        serverStatusOut.m_sendSoftBodyData.m_contact_force_z[i] = /*psb->m_rcontacts[i].m_impulse.z() * */psb->m_nodeRigidContacts[i].m_c0[2][0];
+        serverStatusOut.m_sendSoftBodyData.m_contact_force_x[i] = /*psb->m_rcontacts[i].m_impulse.x() * */psb->m_nodeRigidContacts[i].m_impulse.x();
+        serverStatusOut.m_sendSoftBodyData.m_contact_force_y[i] = /*psb->m_rcontacts[i].m_impulse.y() * */psb->m_nodeRigidContacts[i].m_impulse.y();
+        serverStatusOut.m_sendSoftBodyData.m_contact_force_z[i] = /*psb->m_rcontacts[i].m_impulse.z() * */psb->m_nodeRigidContacts[i].m_impulse.z();
         // serverStatusOut.m_sendSoftBodyData.m_contact_force_x[i] = (1.0 / psb->m_rcontacts[i].m_node->m_im) * psb->m_rcontacts[i].m_impulse.x() * psb->m_rcontacts[i].m_c2 / m_data->m_physicsDeltaTime;
         // serverStatusOut.m_sendSoftBodyData.m_contact_force_y[i] = (1.0 / psb->m_rcontacts[i].m_node->m_im) * psb->m_rcontacts[i].m_impulse.y() * psb->m_rcontacts[i].m_c2 / m_data->m_physicsDeltaTime;
         // serverStatusOut.m_sendSoftBodyData.m_contact_force_z[i] = (1.0 / psb->m_rcontacts[i].m_node->m_im) * psb->m_rcontacts[i].m_impulse.z() * psb->m_rcontacts[i].m_c2 / m_data->m_physicsDeltaTime;
@@ -7879,10 +7879,10 @@ bool PhysicsServerCommandProcessor::processRequestSoftBodyDataCommand(const stru
         // serverStatusOut.m_sendSoftBodyData.m_contact_force_z[i] = (1.0 / psb->m_rcontacts[i].m_node->m_im) * psb->m_rcontacts[i].m_impulse.z() / m_data->m_physicsDeltaTime;
     }
 
-    if(psb->m_nodeRigidContacts.size() > 0)
+    /*if(psb->m_nodeRigidContacts.size() > 0)
     {
         printf("have contact, node val = %f\n", psb->m_nodeRigidContacts[0].m_c0[0][0]);
-    }
+    }*/
 
 
     // Using old soft contact

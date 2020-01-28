@@ -146,7 +146,7 @@ void btDeformableContactProjection::setConstraints(const btContactSolverInfo& in
 		// set Deformable Node vs. Rigid constraint
 		for (int j = 0; j < psb->m_nodeRigidContacts.size(); ++j)
 		{
-			const btSoftBody::DeformableNodeRigidContact& contact = psb->m_nodeRigidContacts[j];
+			btSoftBody::DeformableNodeRigidContact& contact = psb->m_nodeRigidContacts[j];
 			// skip fixed points
 			if (contact.m_node->m_im == 0)
 			{
@@ -167,7 +167,7 @@ void btDeformableContactProjection::setConstraints(const btContactSolverInfo& in
 		// set Deformable Face vs. Rigid constraint
 		for (int j = 0; j < psb->m_faceRigidContacts.size(); ++j)
 		{
-			const btSoftBody::DeformableFaceRigidContact& contact = psb->m_faceRigidContacts[j];
+			btSoftBody::DeformableFaceRigidContact& contact = psb->m_faceRigidContacts[j];
 			// skip fixed faces
 			if (contact.m_c2 == 0)
 			{
