@@ -7839,23 +7839,43 @@ bool PhysicsServerCommandProcessor::processRequestSoftBodyDataCommand(const stru
 
     InternalBodyHandle* bodyHandle = m_data->m_bodyHandles.getHandle(softBodyDataArgs.m_bodyId);
     btSoftBody* psb = bodyHandle->m_softBody;
-    serverStatusOut.m_sendSoftBodyData.m_numNodes = psb->m_nodes.size();
-    printf("cloth node 0 pos: (%f, %f, %f)\n", psb->m_nodes[0].m_x.x(), psb->m_nodes[0].m_x.y(), psb->m_nodes[0].m_x.z());
-    for (int i = 0; i < psb->m_nodes.size() && i < 10000; i++)
+
+
+    // Copy all faces. Each face consists of 3 nodes, each node has X Y Z
+    serverStatusOut.m_sendSoftBodyData.m_numFaces = psb->m_faces.size();
+    for (int i = 0; i < psb->m_faces.size() && i < 10000; i++)
     {
-        serverStatusOut.m_sendSoftBodyData.m_x[i] = psb->m_nodes[i].m_x.x();
-        serverStatusOut.m_sendSoftBodyData.m_y[i] = psb->m_nodes[i].m_x.y();
-        serverStatusOut.m_sendSoftBodyData.m_z[i] = psb->m_nodes[i].m_x.z();
+        serverStatusOut.m_sendSoftBodyData.m_0_x[i] = psb->m_faces[i].m_n[0]->m_x.x();
+        serverStatusOut.m_sendSoftBodyData.m_0_y[i] = psb->m_faces[i].m_n[0]->m_x.y();
+        serverStatusOut.m_sendSoftBodyData.m_0_z[i] = psb->m_faces[i].m_n[0]->m_x.z();
+        serverStatusOut.m_sendSoftBodyData.m_1_x[i] = psb->m_faces[i].m_n[1]->m_x.x();
+        serverStatusOut.m_sendSoftBodyData.m_1_y[i] = psb->m_faces[i].m_n[1]->m_x.y();
+        serverStatusOut.m_sendSoftBodyData.m_1_z[i] = psb->m_faces[i].m_n[1]->m_x.z();
+        serverStatusOut.m_sendSoftBodyData.m_2_x[i] = psb->m_faces[i].m_n[2]->m_x.x();
+        serverStatusOut.m_sendSoftBodyData.m_2_y[i] = psb->m_faces[i].m_n[2]->m_x.y();
+        serverStatusOut.m_sendSoftBodyData.m_2_z[i] = psb->m_faces[i].m_n[2]->m_x.z();
     }
+
+    // for (int i = 0; i < psb->m_faces.size() && i < 10000; i++)
+    // {
+    // 	printf("\nface %d ", i);
+    // 	for(int j = 0; j < 3; j++)
+    // 	{
+    // 		for(int k = 0; k < psb->m_nodes.size() && k < 10000; k++)
+    // 			if(psb->m_faces[i].m_n[j] == psb->m_nodes[k])
+    // 				printf("%d, ", k);
+    // 	}
+
+    //     //printf("face %d, %f %f %f\n", i, psb->m_faces[i].m_n[0]->m_x[0], psb->m_faces[i].m_n[1]->m_x[0], psb->m_faces[i].m_n[2]->m_x[0]);
+    // }
 
     // TODO: Need to record and access impulse computed from each node
     // https://github.com/bulletphysics/bullet3/blob/cdd56e46411527772711da5357c856a90ad9ea67/src/BulletSoftBody/btSoftBody.cpp#L3090
 
 
     // Note, there are many types of constraint solvers. If we're using SDF_RD, then we get m_nodeRigidContacts
-
-    printf("rcontacts %d scontacts %d, face contacts %d node rigid %d face rigid %d\n", psb->m_rcontacts.size(), psb->m_scontacts.size(), 
-    	psb->m_faceNodeContacts.size(), psb->m_nodeRigidContacts.size(), psb->m_faceRigidContacts.size());
+    // printf("rcontacts %d scontacts %d, face contacts %d node rigid %d face rigid %d\n", psb->m_rcontacts.size(), psb->m_scontacts.size(), 
+    // 	psb->m_faceNodeContacts.size(), psb->m_nodeRigidContacts.size(), psb->m_faceRigidContacts.size());
 
 
     // New deformable contact
@@ -7868,9 +7888,9 @@ bool PhysicsServerCommandProcessor::processRequestSoftBodyDataCommand(const stru
         // serverStatusOut.m_sendSoftBodyData.m_contact_force_x[i] = psb->m_rcontacts[i].m_impulse.x() / m_data->m_physicsDeltaTime;
         // serverStatusOut.m_sendSoftBodyData.m_contact_force_y[i] = psb->m_rcontacts[i].m_impulse.y() / m_data->m_physicsDeltaTime;
         // serverStatusOut.m_sendSoftBodyData.m_contact_force_z[i] = psb->m_rcontacts[i].m_impulse.z() / m_data->m_physicsDeltaTime;
-        serverStatusOut.m_sendSoftBodyData.m_contact_force_x[i] = /*psb->m_rcontacts[i].m_impulse.x() * */psb->m_nodeRigidContacts[i].m_impulse.x();
-        serverStatusOut.m_sendSoftBodyData.m_contact_force_y[i] = /*psb->m_rcontacts[i].m_impulse.y() * */psb->m_nodeRigidContacts[i].m_impulse.y();
-        serverStatusOut.m_sendSoftBodyData.m_contact_force_z[i] = /*psb->m_rcontacts[i].m_impulse.z() * */psb->m_nodeRigidContacts[i].m_impulse.z();
+        serverStatusOut.m_sendSoftBodyData.m_contact_force_x[i] = psb->m_nodeRigidContacts[i].m_impulse.x() * psb->m_nodeRigidContacts[i].m_c2;
+        serverStatusOut.m_sendSoftBodyData.m_contact_force_y[i] = psb->m_nodeRigidContacts[i].m_impulse.y() * psb->m_nodeRigidContacts[i].m_c2;
+        serverStatusOut.m_sendSoftBodyData.m_contact_force_z[i] = psb->m_nodeRigidContacts[i].m_impulse.z() * psb->m_nodeRigidContacts[i].m_c2;
         // serverStatusOut.m_sendSoftBodyData.m_contact_force_x[i] = (1.0 / psb->m_rcontacts[i].m_node->m_im) * psb->m_rcontacts[i].m_impulse.x() * psb->m_rcontacts[i].m_c2 / m_data->m_physicsDeltaTime;
         // serverStatusOut.m_sendSoftBodyData.m_contact_force_y[i] = (1.0 / psb->m_rcontacts[i].m_node->m_im) * psb->m_rcontacts[i].m_impulse.y() * psb->m_rcontacts[i].m_c2 / m_data->m_physicsDeltaTime;
         // serverStatusOut.m_sendSoftBodyData.m_contact_force_z[i] = (1.0 / psb->m_rcontacts[i].m_node->m_im) * psb->m_rcontacts[i].m_impulse.z() * psb->m_rcontacts[i].m_c2 / m_data->m_physicsDeltaTime;

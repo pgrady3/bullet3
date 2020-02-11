@@ -223,12 +223,8 @@ btScalar btDeformableRigidContactConstraint::solveConstraint(const btContactSolv
     m_total_normal_dv -= impulse_normal * m_contact->m_c2;
     m_total_tangent_dv -= impulse_tangent * m_contact->m_c2;
 
-    //Patrick Grady, save impulse
-    //m_contact->m_impulse.setValue(impulse.x(), impulse.y(), impulse.z());
-    //m_contact->m_impulse.setValue(11, 22, 33);
-    
-    if (btDot(impulse, impulse) > 0.00001)
-        printf("btDeformableRigidContactConstraint::solveConstraint %f %f %f\n", impulse[0], impulse[1], impulse[2]);
+    //if (btDot(impulse, impulse) > 0.00001)
+    //    printf("btDeformableRigidContactConstraint::solveConstraint %f %f %f\n", impulse[0], impulse[1], impulse[2]);
 
     if (m_total_normal_dv.dot(cti.m_normal) < 0)
     {

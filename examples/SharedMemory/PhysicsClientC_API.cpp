@@ -289,10 +289,17 @@ B3_SHARED_API int b3GetSoftBodyData(b3SharedMemoryStatusHandle statusHandle, str
 	b3Assert(status->m_type == CMD_SOFTBODY_DATA_COMPLETED);
 	if (status && status->m_type == CMD_SOFTBODY_DATA_COMPLETED)
 	{
-        data->m_numNodes = status->m_sendSoftBodyData.m_numNodes;
-        data->m_x = status->m_sendSoftBodyData.m_x;
-        data->m_y = status->m_sendSoftBodyData.m_y;
-        data->m_z = status->m_sendSoftBodyData.m_z;
+        data->m_numFaces = status->m_sendSoftBodyData.m_numFaces;
+        data->m_0_x = status->m_sendSoftBodyData.m_0_x;
+        data->m_0_y = status->m_sendSoftBodyData.m_0_y;
+        data->m_0_z = status->m_sendSoftBodyData.m_0_z;
+        data->m_1_x = status->m_sendSoftBodyData.m_1_x;
+        data->m_1_y = status->m_sendSoftBodyData.m_1_y;
+        data->m_1_z = status->m_sendSoftBodyData.m_1_z;
+        data->m_2_x = status->m_sendSoftBodyData.m_2_x;
+        data->m_2_y = status->m_sendSoftBodyData.m_2_y;
+        data->m_2_z = status->m_sendSoftBodyData.m_2_z;
+
         data->m_numContacts = status->m_sendSoftBodyData.m_numContacts;
         data->m_contact_pos_x = status->m_sendSoftBodyData.m_contact_pos_x;
         data->m_contact_pos_y = status->m_sendSoftBodyData.m_contact_pos_y;

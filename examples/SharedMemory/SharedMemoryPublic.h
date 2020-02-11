@@ -458,10 +458,16 @@ struct b3MeshData
  // Patrick Grady
 struct b3SoftBodyData
 {
-	int m_numNodes;
-	const float* m_x; // m_numNodes floats
-	const float* m_y; // m_numNodes floats
-	const float* m_z; // m_numNodes floats
+	int m_numFaces;
+	const float* m_0_x; // m_numNodes floats
+	const float* m_0_y; // m_numNodes floats
+	const float* m_0_z; // m_numNodes floats
+	const float* m_1_x; // m_numNodes floats
+	const float* m_1_y; // m_numNodes floats
+	const float* m_1_z; // m_numNodes floats
+	const float* m_2_x; // m_numNodes floats
+	const float* m_2_y; // m_numNodes floats
+	const float* m_2_z; // m_numNodes floats
 	int m_numContacts;
     const float* m_contact_pos_x;
     const float* m_contact_pos_y;

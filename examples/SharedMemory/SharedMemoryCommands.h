@@ -558,12 +558,19 @@ struct SoftBodyDataArgs
 
 struct SendSoftBodyData
 {
-	int m_numNodes;
+	int m_numFaces;
     // btAlignedObjectArray<Node> m_nodes;
     // btSoftBody::tNodeArray m_nodes;
-    float m_x[10000];
-    float m_y[10000];
-    float m_z[10000];
+    float m_0_x[10000];
+    float m_0_y[10000];
+    float m_0_z[10000];
+    float m_1_x[10000];
+    float m_1_y[10000];
+    float m_1_z[10000];
+    float m_2_x[10000];
+    float m_2_y[10000];
+    float m_2_z[10000];
+
 	int m_numContacts;
     float m_contact_pos_x[10000];
     float m_contact_pos_y[10000];

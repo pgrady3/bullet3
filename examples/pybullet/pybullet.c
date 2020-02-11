@@ -2167,35 +2167,59 @@ static PyObject* pybullet_getSoftBodyData(PyObject* self, PyObject* args, PyObje
 		if (statusType == CMD_SOFTBODY_DATA_COMPLETED)
 		{
 			PyObject* pyResultList;
-            PyObject* pyX;
-            PyObject* pyY;
-            PyObject* pyZ;
+            PyObject* py0X;
+            PyObject* py0Y;
+            PyObject* py0Z;
+            PyObject* py1X;
+            PyObject* py1Y;
+            PyObject* py1Z;
+            PyObject* py2X;
+            PyObject* py2Y;
+            PyObject* py2Z;
             PyObject* pyContactPosX;
             PyObject* pyContactPosY;
             PyObject* pyContactPosZ;
             PyObject* pyContactForceX;
             PyObject* pyContactForceY;
             PyObject* pyContactForceZ;
-            pyResultList = PyTuple_New(9);
+            pyResultList = PyTuple_New(15);
             b3GetSoftBodyData(statusHandle, &data);
 
 #ifdef PYBULLET_USE_NUMPY
-            npy_intp dims[1] = {data.m_numNodes};
+            npy_intp dims[1] = {data.m_numFaces};
             npy_intp dimsContact[1] = {data.m_numContacts};
 
-            pyX = PyArray_SimpleNew(1, dims, NPY_FLOAT32);
-            pyY = PyArray_SimpleNew(1, dims, NPY_FLOAT32);
-            pyZ = PyArray_SimpleNew(1, dims, NPY_FLOAT32);
+            py0X = PyArray_SimpleNew(1, dims, NPY_FLOAT32);
+            py0Y = PyArray_SimpleNew(1, dims, NPY_FLOAT32);
+            py0Z = PyArray_SimpleNew(1, dims, NPY_FLOAT32);
+
+            py1X = PyArray_SimpleNew(1, dims, NPY_FLOAT32);
+            py1Y = PyArray_SimpleNew(1, dims, NPY_FLOAT32);
+            py1Z = PyArray_SimpleNew(1, dims, NPY_FLOAT32);
+
+            py2X = PyArray_SimpleNew(1, dims, NPY_FLOAT32);
+            py2Y = PyArray_SimpleNew(1, dims, NPY_FLOAT32);
+            py2Z = PyArray_SimpleNew(1, dims, NPY_FLOAT32);
+
             pyContactPosX = PyArray_SimpleNew(1, dimsContact, NPY_FLOAT32);
             pyContactPosY = PyArray_SimpleNew(1, dimsContact, NPY_FLOAT32);
             pyContactPosZ = PyArray_SimpleNew(1, dimsContact, NPY_FLOAT32);
             pyContactForceX = PyArray_SimpleNew(1, dimsContact, NPY_FLOAT32);
             pyContactForceY = PyArray_SimpleNew(1, dimsContact, NPY_FLOAT32);
             pyContactForceZ = PyArray_SimpleNew(1, dimsContact, NPY_FLOAT32);
+            
+            memcpy(PyArray_DATA(py0X), data.m_0_x, data.m_numFaces * sizeof(float));
+            memcpy(PyArray_DATA(py0Y), data.m_0_y, data.m_numFaces * sizeof(float));
+            memcpy(PyArray_DATA(py0Z), data.m_0_z, data.m_numFaces * sizeof(float));
 
-            memcpy(PyArray_DATA(pyX), data.m_x, data.m_numNodes * sizeof(float));
-            memcpy(PyArray_DATA(pyY), data.m_y, data.m_numNodes * sizeof(float));
-            memcpy(PyArray_DATA(pyZ), data.m_z, data.m_numNodes * sizeof(float));
+            memcpy(PyArray_DATA(py1X), data.m_1_x, data.m_numFaces * sizeof(float));
+            memcpy(PyArray_DATA(py1Y), data.m_1_y, data.m_numFaces * sizeof(float));
+            memcpy(PyArray_DATA(py1Z), data.m_1_z, data.m_numFaces * sizeof(float));
+
+            memcpy(PyArray_DATA(py2X), data.m_2_x, data.m_numFaces * sizeof(float));
+            memcpy(PyArray_DATA(py2Y), data.m_2_y, data.m_numFaces * sizeof(float));
+            memcpy(PyArray_DATA(py2Z), data.m_2_z, data.m_numFaces * sizeof(float));
+
             memcpy(PyArray_DATA(pyContactPosX), data.m_contact_pos_x, data.m_numContacts * sizeof(float));
             memcpy(PyArray_DATA(pyContactPosY), data.m_contact_pos_y, data.m_numContacts * sizeof(float));
             memcpy(PyArray_DATA(pyContactPosZ), data.m_contact_pos_z, data.m_numContacts * sizeof(float));
@@ -2203,22 +2227,33 @@ static PyObject* pybullet_getSoftBodyData(PyObject* self, PyObject* args, PyObje
             memcpy(PyArray_DATA(pyContactForceY), data.m_contact_force_y, data.m_numContacts * sizeof(float));
             memcpy(PyArray_DATA(pyContactForceZ), data.m_contact_force_z, data.m_numContacts * sizeof(float));
 
-            printf("getSoftBodyData: dimsContact = %d, NUMPY \n\n", data.m_numContacts);
 #else   //PYBULLET_USE_NUMPY
-            pyX = PyTuple_New(data.m_numNodes);
-            pyY = PyTuple_New(data.m_numNodes);
-            pyZ = PyTuple_New(data.m_numNodes);
+            py0X = PyTuple_New(data.m_numFaces);
+            py0Y = PyTuple_New(data.m_numFaces);
+            py0Z = PyTuple_New(data.m_numFaces);
+            py1X = PyTuple_New(data.m_numFaces);
+            py1Y = PyTuple_New(data.m_numFaces);
+            py1Z = PyTuple_New(data.m_numFaces);
+            py2X = PyTuple_New(data.m_numFaces);
+            py2Y = PyTuple_New(data.m_numFaces);
+            py2Z = PyTuple_New(data.m_numFaces);
             pyContactPosX = PyTuple_New(data.m_numContacts);
             pyContactPosY = PyTuple_New(data.m_numContacts);
             pyContactPosZ = PyTuple_New(data.m_numContacts);
             pyContactForceX = PyTuple_New(data.m_numContacts);
             pyContactForceY = PyTuple_New(data.m_numContacts);
             pyContactForceZ = PyTuple_New(data.m_numContacts);
-            for (int i = 0; i < data.m_numNodes; i++)
+            for (int i = 0; i < data.m_numFaces; i++)
             {
-                PyTuple_SetItem(pyX, i, PyFloat_FromDouble(data.m_x[i]));
-                PyTuple_SetItem(pyY, i, PyFloat_FromDouble(data.m_y[i]));
-                PyTuple_SetItem(pyZ, i, PyFloat_FromDouble(data.m_z[i]));
+                PyTuple_SetItem(py0X, i, PyFloat_FromDouble(data.m_0_x[i]));
+                PyTuple_SetItem(py0Y, i, PyFloat_FromDouble(data.m_0_y[i]));
+                PyTuple_SetItem(py0Z, i, PyFloat_FromDouble(data.m_0_z[i]));
+                PyTuple_SetItem(py1X, i, PyFloat_FromDouble(data.m_1_x[i]));
+                PyTuple_SetItem(py1Y, i, PyFloat_FromDouble(data.m_1_y[i]));
+                PyTuple_SetItem(py1Z, i, PyFloat_FromDouble(data.m_1_z[i]));
+                PyTuple_SetItem(py2X, i, PyFloat_FromDouble(data.m_2_x[i]));
+                PyTuple_SetItem(py2Y, i, PyFloat_FromDouble(data.m_2_y[i]));
+                PyTuple_SetItem(py2Z, i, PyFloat_FromDouble(data.m_2_z[i]));
             }
             for (int i = 0; i < data.m_numContacts; i++)
             {
@@ -2230,20 +2265,24 @@ static PyObject* pybullet_getSoftBodyData(PyObject* self, PyObject* args, PyObje
                 PyTuple_SetItem(pyContactForceZ, i, PyFloat_FromDouble(data.m_contact_force_z[i]));
             }
 
-
-			printf("getSoftBodyData: dimsContact = %d, NO NUMPY \n\n", data.m_numContacts);
 #endif  //PYBULLET_USE_NUMPY
 
 
-			PyTuple_SetItem(pyResultList, 0, pyX);
-			PyTuple_SetItem(pyResultList, 1, pyY);
-			PyTuple_SetItem(pyResultList, 2, pyZ);
-			PyTuple_SetItem(pyResultList, 3, pyContactPosX);
-			PyTuple_SetItem(pyResultList, 4, pyContactPosY);
-			PyTuple_SetItem(pyResultList, 5, pyContactPosZ);
-			PyTuple_SetItem(pyResultList, 6, pyContactForceX);
-			PyTuple_SetItem(pyResultList, 7, pyContactForceY);
-			PyTuple_SetItem(pyResultList, 8, pyContactForceZ);
+			PyTuple_SetItem(pyResultList, 0, py0X);
+			PyTuple_SetItem(pyResultList, 1, py0Y);
+			PyTuple_SetItem(pyResultList, 2, py0Z);
+			PyTuple_SetItem(pyResultList, 3, py1X);
+			PyTuple_SetItem(pyResultList, 4, py1Y);
+			PyTuple_SetItem(pyResultList, 5, py1Z);
+			PyTuple_SetItem(pyResultList, 6, py2X);
+			PyTuple_SetItem(pyResultList, 7, py2Y);
+			PyTuple_SetItem(pyResultList, 8, py2Z);
+			PyTuple_SetItem(pyResultList, 9, pyContactPosX);
+			PyTuple_SetItem(pyResultList, 10, pyContactPosY);
+			PyTuple_SetItem(pyResultList, 11, pyContactPosZ);
+			PyTuple_SetItem(pyResultList, 12, pyContactForceX);
+			PyTuple_SetItem(pyResultList, 13, pyContactForceY);
+			PyTuple_SetItem(pyResultList, 14, pyContactForceZ);
 			return pyResultList;
 		}
 	}
